@@ -1,0 +1,16 @@
+{
+  "name": "iot_asgn2",
+  "version": "1.0.0",
+  "description": "This is my assignement 2 project for the IoT module.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kemal Altwlkany",
+  "license": "ISC",
+  "dependencies": {
+    "http": "0.0.0",
+    "mqtt": "^3.0.0",
+    "noble": "^1.9.1"
+  }
+}
