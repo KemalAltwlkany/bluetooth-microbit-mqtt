@@ -7,35 +7,44 @@ var buttonRefreshPeriod = 5000; //in seconds
 //Callback once a characteristic has been discovered (and the event raised).
 function buttonCallback(error, characteristics) {
   if (error) {
-    console.log("Error discovering ADC characteristics!");
+    console.log("Error discovering Button characteristics!");
   }
   else {
     console.log('Successfully discovered characteristics of Button service!');
     for (var i in characteristics) {
      	console.log('  ' + i + ' uuid: ' + characteristics[i].uuid);
-     	setInterval(buttonIntervalCallback, buttonRefreshPeriod, characteristic[i]);
+     	characteristics[i].subscribe(buttonSubscriberCallback);  //bind subscription event to callback
+      characteristics[i].on('data', buttonDataCallback); //bind data change event to callback
       }
   }
 }
 
-function buttonIntervalCallback(charToRead){
-	charToRead.read(buttonReadData);
-}
-
-function buttonReadData(error, data){
-  if (error){
-    console.log("Error reading the data!");
+//Callback regarding the subscription event
+function buttonSubscriberCallback(error){
+  if(error){
+    console.log('Error Subscribing to characteristics of button service');
+  } else{ 
+    console.log('Notifications Enabled');
   }
-  else{ 
-    var time = new Date();
-
-    //IMPORTANT THE VALUE IS IN HEXADECIMAL.
-    //console.log("Value of serv=" + service_uuid + ", char=" + characteristic_uuid + " at: " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + " is : " + data.toString('hex'));
-    messageToPublish = "" + time.getDate() + "/" + time.getMonth() + "/" + time.getFullYear() + "/" + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + ",  LED is = " + data.toString('hex');
-    a1.mqttClient.publish("kemalA/button", messageToPublish);
-    console.log("Button, " +  messageToPublish);
-  }	
 }
+
+//Callback for whenever data has been read, from the button service
+function buttonDataCallback(data, isNotification){
+  var time = new Date();
+  var x;
+  if (data.toString('hex')=='01'){
+    x = 'ON';
+  }
+  else{
+    x ='OFF';
+  }
+  //IMPORTANT THE VALUE IS IN HEXADECIMAL.
+  //console.log("Value of serv=" + service_uuid + ", char=" + characteristic_uuid + " at: " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + " is : " + data.toString('hex'));
+  messageToPublish = "" + time.getDate() + "/" + (time.getMonth()+1) + "/" + time.getFullYear() + "/" + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + ",  LED STATE = " + x;
+  a1.mqttClient.publish("kemalA/LEDState", messageToPublish);
+  console.log("LEDState: " +  messageToPublish);  
+}
+
 
 //We only need the "main" callback in our main.js file
 //From the buttonCallback function all other methods from this file are called

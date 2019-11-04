@@ -43,7 +43,7 @@ function magReadDataX(error, data){
 
     //IMPORTANT THE VALUE IS IN HEXADECIMAL.
     //console.log("Value of serv=" + service_uuid + ", char=" + characteristic_uuid + " at: " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + " is : " + data.toString('hex'));
-    messageToPublish = "" + time.getDate() + "/" + time.getMonth() + "/" + time.getFullYear() + "/" + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + ",  X = " + data.toString('hex');
+    messageToPublish = "" + time.getDate() + "/" + (time.getMonth()+1) + "/" + time.getFullYear() + "/" + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + ",  X = " + data.toString('hex');
     a1.mqttClient.publish("kemalA/mag", messageToPublish);
     console.log("MAG, " +  messageToPublish);
   }
@@ -88,6 +88,6 @@ function magReadDataZ(error, data){
 }
 
 //We only need the "main" callback in our main.js file
-//From the ADCCallback function all other methods from this file are called
+//From the magCallback function all other methods from this file are called
 //and are therefore within scope
 exports.magCallback = magCallback

@@ -31,7 +31,7 @@ function ADCReadData(error, data){
 
     //IMPORTANT THE VALUE IS IN HEXADECIMAL.
     //console.log("Value of serv=" + service_uuid + ", char=" + characteristic_uuid + " at: " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + " is : " + data.toString('hex'));
-    messageToPublish = "" + time.getDate() + "/" + time.getMonth() + "/" + time.getFullYear() + "/" + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + ",  Dig.Val. = " + data.toString('hex');
+    messageToPublish = "" + time.getDate() + "/" + (time.getMonth()+1) + "/" + time.getFullYear() + "/" + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + ",  Dig.Val. = " + data.toString('hex');
     a1.mqttClient.publish("kemalA/ADC", messageToPublish);
     console.log("ADC, " +  messageToPublish);
   }	
