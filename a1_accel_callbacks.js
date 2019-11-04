@@ -1,6 +1,16 @@
 //We need to import the main project because it contains
 //the mqttClient object, as well as the noble object
 var a1 = require('./a1_main.js');
+var fs = require('fs');
+
+fileToWriteAccel = fs.createWriteStream('/home/kemal/Documents/SKLADISTE_MINT/FAKS/TU_DUBLIN/IoT/asgn2/measurements/accel.txt', {flags: 'a'});
+
+
+function accelWriteCallback(error){
+  if (error){
+    console.log('Error while writing to the accel.txt file!');
+  }
+}
 
 var accelRefreshPeriod = 5000; //in seconds
 
@@ -46,6 +56,7 @@ function accelReadDataX(error, data){
     messageToPublish = "" + time.getDate() + "/" + (time.getMonth()+1) + "/" + time.getFullYear() + "/" + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + ",  X = " + data.toString('hex');
     a1.mqttClient.publish("kemalA/accel", messageToPublish);
     console.log("Accel, " +  messageToPublish);
+    fileToWriteAccel.write(messageToPublish+'\n', accelWriteCallback);
   }
 }
 
@@ -65,6 +76,7 @@ function accelReadDataY(error, data){
     messageToPublish = "" + time.getDate() + "/" + time.getMonth() + "/" + time.getFullYear() + "/" + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + ",  Y = " + data.toString('hex');
     a1.mqttClient.publish("kemalA/accel", messageToPublish);
     console.log("Accel, " +  messageToPublish);
+    fileToWriteAccel.write(messageToPublish+'\n', accelWriteCallback);
   }
 }
 
@@ -85,6 +97,7 @@ function accelReadDataZ(error, data){
     messageToPublish = "" + time.getDate() + "/" + time.getMonth() + "/" + time.getFullYear() + "/" + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + ",  Z = " + data.toString('hex');
     a1.mqttClient.publish("kemalA/accel", messageToPublish);
     console.log("Accel, " +  messageToPublish);
+    fileToWriteAccel.write(messageToPublish+'\n', accelWriteCallback);
   }
 }
 

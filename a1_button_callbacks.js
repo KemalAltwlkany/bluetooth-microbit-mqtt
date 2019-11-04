@@ -40,9 +40,9 @@ function buttonDataCallback(data, isNotification){
   }
   //IMPORTANT THE VALUE IS IN HEXADECIMAL.
   //console.log("Value of serv=" + service_uuid + ", char=" + characteristic_uuid + " at: " + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + " is : " + data.toString('hex'));
-  messageToPublish = "" + time.getDate() + "/" + (time.getMonth()+1) + "/" + time.getFullYear() + "/" + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + ",  LED STATE = " + x;
-  a1.mqttClient.publish("kemalA/LEDState", messageToPublish);
-  console.log("LEDState: " +  messageToPublish);  
+  messageToPublish = "" + time.getDate() + "/" + (time.getMonth()+1) + "/" + time.getFullYear() + "/" + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + ",  LEDbutton STATE = " + x;
+  a1.mqttClient.publish("kemalA/LEDbutton", messageToPublish);
+  console.log("LEDbutton state: " +  messageToPublish);  
 }
 
 

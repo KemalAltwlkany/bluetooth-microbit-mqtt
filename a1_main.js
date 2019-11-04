@@ -3,24 +3,24 @@
 //Noble and information regarding GATT
 var noble = require('noble'); //import noble library
 var device_uuid = 'dcef302a7deb'; //MAC address of device to look for
-var servicesUUIDs = ['a000', 'b000', 'c000', 'd000']; //services which we are interested in
+var servicesUUIDs = ['a000', 'b000', 'c000', 'd000', 'e000']; //services which we are interested in
 
 
 
 //MQTT and information regarding the publish and subscribe topics
 var mqtt = require('mqtt');
-var listeningTopics = ["kemalA/LED"]; //topics we will subscribe to
-var talkingTopics = ["kemalA/accel", "kemalA/mag", "kemalA/adc", "kemalA/LEDState"]; //topics we will listen to
+var listeningTopics = ["kemalA/LEDcloud", "kemalA/ADC"]; //topics we will subscribe to
+var talkingTopics = ["kemalA/accel", "kemalA/mag", "kemalA/ADC", "kemalA/LEDbutton"]; //topics we will listen to
 var mqttClient  = mqtt.connect('mqtt://broker.mqttdashboard.com'); //broker
 
 
 var intervalTime = 5000; //needed for defining publishing frequency
-
 //My personal modules, for increasing code readabillity
 var a1_accel = require('./a1_accel_callbacks.js'); 
 var a1_mag = require('./a1_mag_callbacks.js');
 var a1_ADC = require('./a1_ADC_callbacks.js');
 var a1_button = require('./a1_button_callbacks.js');
+var a1_cloud = require('./a1_cloud_service.js');
 
 
 noble.on('stateChange', stateChangeHandler); //bind callback function to a 'stateChange' event
@@ -42,6 +42,20 @@ mqttClient.on('message', messageHandler); //bind the callback function to a 'mes
 //The callback function which is executed whenever a message is received.
 function messageHandler(topic, message, packet) { 
     console.log("Received message'" + message + "' on topic '" + topic + "'");
+    if ( topic == 'kemalA/LEDcloud' ){
+    	if ( (message == '1') &&  (a1_cloud.currState == 0) ){
+    			a1_cloud.currState = 1;
+    			a1_cloud.writeDataToLEDCloud(1);
+    	}
+    	else if ( (message == '0') &&  (a1_cloud.currState == 1) ){
+    		a1_cloud.currState = 0;
+    		a1_cloud.writeDataToLEDCloud(message);    		
+    	}
+    }
+    else if ( (topic == 'kemalA/ADC') && (message == 'read') ){
+    	console.log('Entered this crap!');
+    	a1_ADC.setPublishing();
+    }
 }
 
 
@@ -143,6 +157,10 @@ function discoverServicesCallback(error, services) {
       	console.log('In the button service.');
       	services[i].discoverCharacteristics([], a1_button.buttonCallback); //bind discoverServ event to callback
       }
+      else if ( services[i].uuid == 'e000'){
+      	console.log('In the LED cloud service');
+      	services[i].discoverCharacteristics([], a1_cloud.cloudCallback); //bind the discoverServ event to the callback
+      }
       //We didn't need to check whether this was our service of interest, BECAUSE
       //we already had setup the discoverServices function to only look for our
       //services of interest (we passed them as an argument).
@@ -152,4 +170,4 @@ function discoverServicesCallback(error, services) {
 
 
 exports.mqttClient = mqttClient;
-exports.intervalTime = intervalTime
+exports.intervalTime = intervalTime;

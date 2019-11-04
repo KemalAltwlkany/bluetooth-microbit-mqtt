@@ -1,8 +1,19 @@
 //We need to import the main project because it contains
 //the mqttClient object, as well as the noble object
 var a1 = require('./a1_main.js');
+var fs = require('fs');
+
+fileToWriteMag = fs.createWriteStream('/home/kemal/Documents/SKLADISTE_MINT/FAKS/TU_DUBLIN/IoT/asgn2/measurements/mag.txt', {flags: 'a'});
+
 
 var magRefreshPeriod = 5000; //in seconds.
+
+
+function magWriteCallback(error){
+  if (error){
+    console.log('Error while writing to the mag.txt file!');
+  }
+}
 
 //Callback once a characteristic has been discovered (and the event raised).
 function magCallback(error, characteristics) {
@@ -46,6 +57,7 @@ function magReadDataX(error, data){
     messageToPublish = "" + time.getDate() + "/" + (time.getMonth()+1) + "/" + time.getFullYear() + "/" + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + ",  X = " + data.toString('hex');
     a1.mqttClient.publish("kemalA/mag", messageToPublish);
     console.log("MAG, " +  messageToPublish);
+    fileToWriteMag.write(messageToPublish+'\n', magWriteCallback);
   }
 }
 
@@ -65,6 +77,7 @@ function magReadDataY(error, data){
     messageToPublish = "" + time.getDate() + "/" + time.getMonth() + "/" + time.getFullYear() + "/" + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + ",  Y = " + data.toString('hex');
     a1.mqttClient.publish("kemalA/mag", messageToPublish);
     console.log("MAG, " +  messageToPublish);
+    fileToWriteMag.write(messageToPublish+'\n', magWriteCallback);
   }
 }
 
@@ -84,6 +97,7 @@ function magReadDataZ(error, data){
     messageToPublish = "" + time.getDate() + "/" + time.getMonth() + "/" + time.getFullYear() + "/" + time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds()  + ",  Z = " + data.toString('hex');
     a1.mqttClient.publish("kemalA/mag", messageToPublish);
     console.log("MAG, " +  messageToPublish);
+    fileToWriteMag.write(messageToPublish+'\n', magWriteCallback);
   }
 }
 
